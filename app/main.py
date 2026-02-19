@@ -3,8 +3,23 @@ from app.core.config import settings
 from app.api.v1.endpoints import prediction
 from app.core.containers import ModelContainer
 
+description = """
+Esta API realiza predições de preços de fechamento futuro de ações utilizando um modelo de Deep Learning **LSTM (Long Short-Term Memory)**.
+
+### Funcionalidades
+* **Histórico**: Busca de dados dos últimos dias.
+* **Predição**: Cálculo do preço esperado de fechamento para o próximo dia útil.
+* **Observabilidade**: Métricas da API expostas ativamente para o formato Prometheus.
+"""
+
 app = FastAPI(
     title=settings.PROJECT_NAME,
+    description=description,
+    version="1.0.0",
+    contact={
+        "name": "FIAP - ML Engineering",
+        "url": "https://github.com/michelhilg/fiap-ml-tech-challenge-4",
+    },
     openapi_url=f"{settings.API_V1_STR}/openapi.json"
 )
 

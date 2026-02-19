@@ -9,7 +9,12 @@ from datetime import timedelta
 
 router = APIRouter()
 
-@router.get("/history", response_model=HistoryResponse)
+@router.get(
+    "/history",
+    response_model=HistoryResponse,
+    summary="Busca de Histórico de Ações",
+    description="Recupera os últimos **100 dias úteis** de dados históricos consolidados para o ativo selecionado direto do Yahoo Finance."
+)
 def get_history(ticker: str = Query("SPY", description="Ticker symbol")):
     """
     Retorna os últimos 100 dias de dados históricos para o ticker informado.
@@ -28,7 +33,12 @@ def get_history(ticker: str = Query("SPY", description="Ticker symbol")):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao buscar histórico: {str(e)}")
 
-@router.post("/predict", response_model=PredictionResponse)
+@router.post(
+    "/predict",
+    response_model=PredictionResponse,
+    summary="Predição do Preço de Fechamento",
+    description="Calcula e infere o valor do preço de fechamento para o **próximo dia útil** através da arquitetura LSTM Neural Network de 60 timestamps de lag."
+)
 def predict_stock(request: PredictionRequest):
     """
     Realiza a predição para o ticker informado.
