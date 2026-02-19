@@ -24,10 +24,12 @@ O modelo e a API estão divididos da seguinte forma para facilitar o desenvolvim
 
 ## Funcionalidades e Requisitos Atendidos
 
-1. **Desenvolvimento do Modelo**: Utilizamos uma rede LSTM treinada para entender dependências temporais em dados de séries financeiras. Foram aplicados indicadores técnicos e normalizações baseadas em janelas temporais fixas (60 dias).
-2. **Dados Históricos em Tempo Real**: O endpoint realiza a coleta atualizada dos dados da bolsa (via módulo `yfinance`), dispensando a necessidade de arquivos CSVs manuais pelo usuário no momento da predição.
-3. **API Preditiva**: Criada com FastAPI. Suporta checagem de saúde (`/health`), busca de histórico de operações (`/api/v1/history`) e inferência do próximo encerramento para o ticker fornecido (`/api/v1/predict`).
-4. **Monitoramento de Performance**: Implementado via `prometheus-fastapi-instrumentator`. O projeto expõe nativamente métricas do servidor em `/metrics` para que soluções robustas (como o ecossistema Prometheus + Grafana) possam medir tempos de resposta, throughput e utilização.
+1. **A Escolha do Ticker (`SPY`)**: O modelo foi treinado tendo como base principal o índice **S&P 500 ETF Trust (SPY)**. A escolha se deve à altíssima liquidez, robustez contra volatilidades isoladas de uma única empresa e ao seu vasto histórico de dados, tornando as predições do LSTM mais consistentes.
+2. **Desenvolvimento do Modelo**: Utilizamos uma rede LSTM treinada para entender dependências temporais em dados de séries financeiras.
+   > **Nota sobre Dados Históricos Mínimos:** O modelo exige uma janela estrita de dias retroativos de preço para calcular a próxima previsão. A API foi configurada para buscar um *buffer* extra (100 dias de histórico). Isso é **vital** porque os indicadores técnicos fundamentais do modelo (como as médias móveis `MA_50`) exigem blocos de dezenas de dias sequenciais autênticos apenas para começarem a funcionar. Uma vez calculados, a LSTM consome os 60 dias mais recentes de dados e os estabiliza para não gerar "ruídos" decorrentes de falta de histórico.
+3. **Dados Históricos em Tempo Real**: O endpoint realiza a coleta atualizada dos dados da bolsa (via módulo `yfinance`), dispensando a necessidade de arquivos CSVs manuais pelo usuário no momento da predição.
+4. **API Preditiva**: Criada com FastAPI. Suporta checagem de saúde (`/health`), busca de histórico de operações (`/api/v1/history`) e inferência do próximo encerramento para o ticker fornecido (`/api/v1/predict`).
+5. **Monitoramento de Performance**: Implementado via `prometheus-fastapi-instrumentator`. A API expõe nativamente uma rota `/metrics` no formato texto para que soluções robustas (como o ecossistema Prometheus + Grafana) possam medir tempos de resposta, throughput e utilização.
 
 ---
 
