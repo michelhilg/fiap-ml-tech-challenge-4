@@ -57,6 +57,14 @@ pip install -r requirements.txt
 
 ### 2. Inicializando a API
 
+Antes de iniciar a API, certifique-se de que o **ambiente virtual está ativo** (o mesmo passo da seção anterior):
+```bash
+# Windows
+.venv\Scripts\activate
+# Mac/Linux
+source .venv/bin/activate
+```
+
 A API foi projetada para iniciar diretamente utilizando o servidor ASGI Uvicorn:
 
 ```bash
@@ -94,9 +102,27 @@ A API já expõe nativamente uma rota `/metrics` no formato texto do Prometheus.
 
 Para criar um acompanhamento profissional da API (Uso de CPU, Memória, Latência das Requisições):
 
-1. **Prometheus (Porta 9090):** Configure o job do Prometheus para escutar os *targets* da API (Ex: `localhost:8000`). Acesse `http://localhost:9090` para verificar se o target está ativo.
-2. **Grafana (Porta 3000):** Acesse `http://localhost:3000`, adicione o Prometheus como sua fonte de dados (*Data Source*).
-3. **Dashboards:** Crie novos painéis consumindo as métricas do Prometheus construídas pelo `prometheus-fastapi-instrumentator`.
+> **Nota de Instalação:** O Prometheus e o Grafana são serviços independentes da API. Caso não os tenha instalado, consulte a documentação oficial para o seu Sistema Operacional:
+> - [Instalando o Prometheus](https://prometheus.io/docs/prometheus/latest/installation/)
+> - [Instalando o Grafana](https://grafana.com/docs/grafana/latest/setup-grafana/installation/)
+
+1. **Iniciando o Prometheus (Porta 9090):** 
+   - O arquivo `prometheus.yml` já está configurado na raiz do projeto.
+   - Inicie o Prometheus apontando para o arquivo de configuração (Exemplo usando caminho absoluto do Homebrew no Mac):
+     ```bash
+     /opt/homebrew/bin/prometheus --config.file=prometheus.yml
+     ```
+   - Acesse `http://localhost:9090` para verificar se o target da API está ativo (*Status > Targets*).
+
+2. **Iniciando o Grafana (Porta 3000):** 
+   - Inicie o serviço do Grafana pela sua máquina (Exemplo no Mac):
+     ```bash
+     /opt/homebrew/bin/brew services start grafana
+     ```
+   - Acesse `http://localhost:3000`.
+   - Vá em **Connections -> Data Sources** e adicione o Prometheus (`http://localhost:9090`).
+
+3. **Dashboards:** Crie novos painéis (*Dashboards*) consumindo as métricas construídas pelo `prometheus-fastapi-instrumentator`, como latência, total de requisições e taxa de erros.
 
 ---
 
